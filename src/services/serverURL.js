@@ -1,2 +1,2 @@
-const SERVERURL = "http://localhost:3000"
+const SERVERURL = "https://server-rmsw.onrender.com"
 export default SERVERURL

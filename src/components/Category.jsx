@@ -5,7 +5,7 @@ import { deleteCategoryAPI, removeVideoAPI, saveCategoryAPI, updateCategoryAPI }
 import { getAllCategoryAPI } from '../services/allAPI';
 import VideoCard from './VideoCard';
 
-const Category = ({setDeleteResponseFromCategory}) => {
+const Category = ({setDeleteResponseFromCategory,deleteResponseFromView}) => {
   const [allCategories, setAllCategories] = useState([])
   const [categoryName,setCategoryName] = useState("")
   const [show, setShow] = useState(false);
@@ -15,7 +15,7 @@ const Category = ({setDeleteResponseFromCategory}) => {
 
   useEffect(()=>{
     getAllCategories()
-  },[])
+  },[deleteResponseFromView])
   console.log(allCategories);
 
   const handleSaveCategory = async () => {
@@ -75,6 +75,12 @@ const Category = ({setDeleteResponseFromCategory}) => {
     setDeleteResponseFromCategory(result)
   }
 
+
+  const categoryVideoDragStarted = (e,dragVideoDetails,categoryDetails)=>{
+    console.log("Inside categoryVideoDragStarted");
+    let dragData = {video:dragVideoDetails,categoryDetails}
+    e.dataTransfer.setData("dragData" ,JSON.stringify(dragData))
+  }
   return (
     <>
       <div className="d-flex justify-content-around align-items-center">
@@ -94,11 +100,11 @@ const Category = ({setDeleteResponseFromCategory}) => {
                 <button onClick={()=>removeCategory(categoryDetails?.id)} className="btn"><i className="fa-solid fa-trash text-danger"></i></button>
               </div>
               {/* display category videos */}
-              <div className="row mt-2">
+              <div  className="row mt-2">
                 {
                   categoryDetails?.allVideos?.length>0 &&
                   categoryDetails?.allVideos?.map(video=>(
-                    <div key={video?.id} className="col-lg-4">
+                    <div draggable={true} onDragStart={e=>categoryVideoDragStarted(e,video,categoryDetails)} key={video?.id} className="col-lg-4">
                       {/* video card */}
                       <VideoCard insideCategory={true} displayData={video} />
                     </div>
